@@ -1,11 +1,12 @@
-
+## Faltan importaciones
 
 servidor = Flask(__name__)
 
 
 def db_conn():
     pass
-
+    ## Falta la conexion a la base de datos con 
+    ## variables de entorno
 
 @servidor.get("/")
 def index():
