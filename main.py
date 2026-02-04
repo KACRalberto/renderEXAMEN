@@ -1,12 +1,24 @@
 ## Faltan importaciones
+from flask import Flask, render_template
+from flask_mysqldb import MySQL
+from os import getenv
+from dotenv import load_dotenv
+load_dotenv()
+
+
 
 servidor = Flask(__name__)
 
 
-def db_conn():
-    pass
-    ## Falta la conexion a la base de datos con 
-    ## variables de entorno
+
+
+
+servidor.config["MYSQL_HOST"] = getenv("MYSQL_ADDON_HOST")
+servidor.config["MYSQL_USER"] = getenv("MYSQL_ADDON_USER")
+servidor.config["MYSQL_DB"] = getenv("MYSQL_ADDON_DB")
+servidor.config["MYSQL_PASSWORD"] = getenv("MYSQL_ADDON_PASSWORD")
+
+conexion = MySQL(servidor)
 
 @servidor.get("/")
 def index():
@@ -14,12 +26,12 @@ def index():
     error = None
 
     try:
-        conn = db_conn()
-        cur = conn.cursor()
+
+        cur = conexion.connection.cursor()
         cur.execute("SELECT id, username, email, full_name FROM users ORDER BY id ASC;")
         users = cur.fetchall()  # [(id, username, email, full_name), ...]
         cur.close()
-        conn.close()
+
     except Exception as e:
         error = str(e)
 
@@ -42,12 +54,11 @@ def health():
     error = None
 
     try:
-        conn = db_conn()
-        cur = conn.cursor()
+        cur = conexion.connection.cursor()
         cur.execute("SELECT 1;")
         cur.fetchone()
         cur.close()
-        conn.close()
+
         ok = True
     except Exception as e:
         error = str(e)
